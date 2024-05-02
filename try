@@ -1,0 +1,194 @@
+import datetime
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from openpyxl import Workbook
+import json
+
+# Dictionary of countries
+countries = {
+    'United States': 'US',
+    'India': 'IN',
+}
+
+# List of keywords to search
+keywords = [
+    'COP 26', 'Glasgow Climate Pact'
+    # Add all other keywords as needed
+]
+
+def scrape_daily_search(driver, keyword, geo):
+    try:
+        search_url = f"https://trends.google.com/trends/explore?date=2013-06-01%202013-6-31&geo={geo}&q={keyword}"
+        driver.get(search_url)
+        
+        # You might need a more specific selector, or even a different method to wait for and extract the data
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'script[type="application/ld+json"]')))
+        
+        # This is a hypothetical selector, you need to replace it with the actual one that contains the JSON with data
+        script_tag = driver.find_element(By.CSS_SELECTOR, 'script[type="application/ld+json"]')
+        json_text = script_tag.get_attribute('innerHTML')
+        
+        # This will depend on the structure of the JSON data within the script tag
+        json_data = json.loads(json_text)
+        
+        # The path within the JSON to get the data would depend on its structure
+        search_volume = json_data['mainEntity']['potentialAction']['target']['entryPoint']['query-input']
+        
+        return search_volume
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None  # or appropriate error handling
+
+def get_driver():
+    service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    options.add_argument("--lang=en")
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    return webdriver.Chrome(service=service, options=options)
+
+def main():
+    driver = get_driver()
+    wb = Workbook()
+    
+    # Getting the date range for the data entries
+    start_date = datetime.date(2013, 6, 1)
+    end_date = datetime.date(2013, 6, 30)
+    delta = datetime.timedelta(days=1)
+
+    # Loop through each country
+    for country, geo in countries.items():
+        ws = wb.create_sheet(title=country)
+        ws.append(['Date'] + keywords)  # Append the header
+
+        current_date = start_date
+        while current_date <= end_date:
+            row_data = [current_date.strftime('%d-%m-%Y')]  # First column with the date
+            for keyword in keywords:
+                try:
+                    search_volume = scrape_daily_search(driver, keyword, geo)
+                except:
+                    time.sleep(60)  # Wait for 60 seconds if request fails
+                    search_volume = scrape_daily_search(driver, keyword, geo)
+                row_data.append(search_volume)
+            ws.append(row_data)
+            current_date += delta
+
+    # Remove the default sheet created by openpyxl
+    default_sheet = wb.get_sheet_by_name('Sheet')
+    wb.remove_sheet(default_sheet)
+
+    wb.save('Google_Trends_Data.xlsx')
+    driver.quit()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+#############################################################################
+
+import datetime
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from openpyxl import Workbook
+import json
+
+# Dictionary of countries
+countries = {
+    'United States': 'US',
+    'India': 'IN',
+}
+
+# List of keywords to search
+keywords = [
+    'COP 26', 'Glasgow Climate Pact'
+    # Add all other keywords as needed
+]
+
+def scrape_daily_search(driver, keyword, geo):
+    try:
+        search_url = f"https://trends.google.com/trends/explore?date=2013-06-01%202013-6-31&geo={geo}&q={keyword}"
+        driver.get(search_url)
+        
+        # Wait until the specified element with class name "fe-atoms-generic-container" is visible
+        WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "fe-atoms-generic-container")))
+        
+        # This is a hypothetical selector, you need to replace it with the actual one that contains the JSON with data
+        script_tag = driver.find_element(By.CSS_SELECTOR, 'script[type="application/ld+json"]')
+        json_text = script_tag.get_attribute('innerHTML')
+        
+        # This will depend on the structure of the JSON data within the script tag
+        json_data = json.loads(json_text)
+        
+        # The path within the JSON to get the data would depend on its structure
+        search_volume = json_data['mainEntity']['potentialAction']['target']['entryPoint']['query-input']
+        
+        return search_volume
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None  # or appropriate error handling
+
+def get_driver():
+    service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()
+    options.headless = False  # Setting headless to False
+    options.add_argument("--lang=en")
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_experimental_option('useAutomationExtension', False)
+    options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    return webdriver.Chrome(service=service, options=options)
+
+def main():
+    driver = get_driver()
+    wb = Workbook()
+    
+    # Getting the date range for the data entries
+    start_date = datetime.date(2013, 6, 1)
+    end_date = datetime.date(2013, 6, 30)
+    delta = datetime.timedelta(days=1)
+
+    # Loop through each country
+    for country, geo in countries.items():
+        ws = wb.create_sheet(title=country)
+        ws.append(['Date'] + keywords)  # Append the header
+
+        current_date = start_date
+        while current_date <= end_date:
+            row_data = [current_date.strftime('%d-%m-%Y')]  # First column with the date
+            for keyword in keywords:
+                try:
+                    search_volume = scrape_daily_search(driver, keyword, geo)
+                except:
+                    time.sleep(60)  # Wait for 60 seconds if request fails
+                    search_volume = scrape_daily_search(driver, keyword, geo)
+                row_data.append(search_volume)
+            ws.append(row_data)
+            current_date += delta
+
+    # Remove the default sheet created by openpyxl
+    default_sheet = wb.get_sheet_by_name('Sheet')
+    wb.remove_sheet(default_sheet)
+
+    wb.save('Google_Trends_Data.xlsx')
+    driver.quit()
+
+if __name__ == "__main__":
+    main()

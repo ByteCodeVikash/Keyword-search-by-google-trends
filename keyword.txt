@@ -1,0 +1,36 @@
+keywords = ['COP 26', 'Glasgow Climate Pact', 'GHE', 'Carbon Capture',
+            'Climate Resilience', 'CMP 16', 'CMA 3', 'Paris Agreement', 'GHG',
+            'Carbon Market', 'COP 27', 'Methane Emission', 'Energy Transition',
+            'Renewable Energy', 'Sustainable Development', 'Adaptive Capacity',
+            'Carbon Capture and Sequestration', 'Carbon Footprint', 'Climate Change',
+            'Conference Of The Parties', 'COP', 'ESG', 'Global Average Temperature',
+            'Global Warming', 'Green Bond', 'Green House Gas Emission', 'Greenhouse Effect',
+            'Heat Waves', 'INDC', 'Indirect Emissions', 'Intended Nationally Determined Contribution',
+            'Intergovernmental Panel on Climate Change', 'IPCC', 'Kyoto Protocol',
+            'Ozone Depleting Substance', 'Ozone Layer Depletion', 'Reforestation',
+            'Sustainability', 'UNFCCC', 'United Nations Framework Convention on Climate Change']
+
+
+
+countries = {
+    'United States': 'US',
+    'India': 'IN',
+    'United Kingdom': 'GB',
+    'Canada': 'CA',
+    'Australia': 'AU',
+    'Germany': 'DE',
+    'France': 'FR',
+    'Brazil': 'BR',
+    'Japan': 'JP',
+    'China': 'CN',
+    'Italy': 'IT',
+    'Russia': 'RU',
+    'South Africa': 'ZA',
+    'Mexico': 'MX',
+    'South Korea': 'KR',
+    'Spain': 'ES',
+    'Argentina': 'AR',
+    'Netherlands': 'NL',
+    'Switzerland': 'CH',
+    'Sweden': 'SE'
+}            
